@@ -1,0 +1,28 @@
+方法1：
+
+mysql >= 5.0
+
+use information_schema;
+
+select table_name,table_rows from tables 
+where TABLE_SCHEMA = '[数据库名]' 
+order by table_rows desc;
+
+以上方法，对于InnoDB表，table_rows行计数仅是大概估计值
+
+方法2：
+
+use information_schema;
+
+select concat(
+    'select "',
+    TABLE_name,
+    '", count(*) from ',
+    TABLE_SCHEMA,
+    '.',
+    TABLE_name,
+    ' union all'
+) from tables
+where TABLE_SCHEMA='[数据库名]';
+
+再将返回的结果，去除最后一个'union all'，粘贴执行。
